@@ -6,6 +6,7 @@ const ru: LocaleType = {
   Error: {
     Unauthorized:
       "Несанкционированный доступ. Пожалуйста, введите код доступа на странице настроек.",
+    PointFailed: "Не удалось списать баллы",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} сообщений`,

@@ -6,6 +6,7 @@ const cs: LocaleType = {
   Error: {
     Unauthorized:
       "Neoprávněný přístup, zadejte přístupový kód na stránce nastavení.",
+      PointFailed: "Odečtení bodů selhalo",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} zpráv`,

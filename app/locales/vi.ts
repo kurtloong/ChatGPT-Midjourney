@@ -6,6 +6,7 @@ const vi: LocaleType = {
   Error: {
     Unauthorized:
       "Truy cập chưa xác thực, vui lòng nhập mã truy cập trong trang cài đặt.",
+    PointFailed: "Không thể trừ điểm",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} tin nhắn`,

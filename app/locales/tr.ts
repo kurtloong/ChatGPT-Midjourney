@@ -6,6 +6,7 @@ const tr: LocaleType = {
   Error: {
     Unauthorized:
       "Yetkisiz erişim, lütfen erişim kodunu ayarlar sayfasından giriniz.",
+    PointFailed: "Puan düşme başarısız oldu",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} mesaj`,

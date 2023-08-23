@@ -6,6 +6,7 @@ const jp: LocaleType = {
   Error: {
     Unauthorized:
       "アクセスパスワードが正しくないか空の場合は、[ログイン](/#/auth)ページに行って正しいアクセスパスワードを入力するか、[設定](/#/settings)ページに自分のOpenAI API Keyを入力してください。",
+    PointFailed: "ポイントの差し引きに失敗しました",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 通のチャット`,

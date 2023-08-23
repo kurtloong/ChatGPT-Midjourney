@@ -6,6 +6,7 @@ const fr: LocaleType = {
   Error: {
     Unauthorized:
       "Accès non autorisé, veuillez saisir le code d'accès dans la page des paramètres.",
+    PointFailed: "Échec de la déduction des points",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages en total`,

@@ -6,6 +6,7 @@ const en: RequiredLocaleType = {
   Error: {
     Unauthorized:
       "Unauthorized access, please enter access code in [auth](/#/auth) page.",
+    PointFailed: "Point deduction failed",
   },
   Auth: {
     Title: "Need Access Code",

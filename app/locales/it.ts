@@ -6,6 +6,7 @@ const it: LocaleType = {
   Error: {
     Unauthorized:
       "Accesso non autorizzato, inserire il codice di accesso nella pagina delle impostazioni.",
+    PointFailed: "Punto di deduzione fallito",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messaggi`,

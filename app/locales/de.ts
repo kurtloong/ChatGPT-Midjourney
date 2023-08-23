@@ -6,6 +6,7 @@ const de: LocaleType = {
   Error: {
     Unauthorized:
       "Unbefugter Zugriff, bitte geben Sie den Zugangscode auf der Einstellungsseite ein.",
+      PointFailed: "Punkteabzug fehlgeschlagen",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} Nachrichten`,
