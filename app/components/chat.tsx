@@ -554,12 +554,18 @@ export function Chat() {
             // Check if the response status is 401
             if (response.status === 401) {
                 access.updateToken('');  // 清除token
+                const copiedHello = Object.assign({}, BOT_HELLO);
+                if (!accessStore.isAuthorized()) {
+                    copiedHello.content = Locale.Error.Unauthorized;
+                }
+                context.push(copiedHello);
                 goAuth();
                 return;  // Ensure the code below doesn't run
             }
 
             if(response.status !== 200) {
-                alert("积分扣除失败");
+                const copiedHello = Object.assign({}, BOT_HELLO);
+                copiedHello.content = Locale.Error.PointFailed;
                 return;
             }
             const res: any = await chatStore.onUserInput(userInput, {
@@ -696,9 +702,6 @@ export function Chat() {
         session.messages.at(0)?.content !== BOT_HELLO.content
     ) {
         const copiedHello = Object.assign({}, BOT_HELLO);
-        if (!accessStore.isAuthorized()) {
-            copiedHello.content = Locale.Error.Unauthorized;
-        }
         context.push(copiedHello);
     }
 
