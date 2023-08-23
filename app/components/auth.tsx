@@ -23,32 +23,41 @@ export function AuthPage() {
 
   const goHome = () => navigate(Path.Home);
 
-  // Mock API call for user authentication
-  const authenticateUser = (username:string, password:string) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (username === "admin" && password === "password123") {
-          resolve({ success: true });
-        } else {
-          reject({ success: false, message: "Invalid username or password." });
-        }
-      }, 1000);
-    });
-  };
+ // 使用fetch调用后端API进行用户认证
+ const authenticateUser = (username: string, password: string) => {
+  return fetch('https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username,
+      password
+    })
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  });
+};
 
-  const handleLogin = () => {
-    authenticateUser(username, password)
-      .then(response => {
-        if (response) {
-          // 3. After login, update the token or access code to simulate setting an auth state
-          access.updateToken('user_token'); // you can set a real token here
-          goHome();
-        }
-      })
-      .catch(error => {
-        setError(error.message);
-      });
-  };
+const handleLogin = () => {
+  authenticateUser(username, password)
+    .then(data => {
+      // 如果登录成功，保存返回的JWT token
+      const token = data.access_token;
+      console.log(token);
+      access.updateToken(token);  // 更新为从后端接收的token
+      goHome();
+    })
+    .catch(error => {
+      // 错误处理时，我们可以将HTTP状态码（如果有）和其他可能的错误消息显示给用户
+      setError(error.message || "Unexpected error occurred.");
+    });
+};
+
+
 
   return (
     <div className={styles["auth-page"]}>

@@ -20,10 +20,12 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
+import { useAccessStore } from "../store";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -105,10 +107,17 @@ function Screen() {
   const isHome = location.pathname === Path.Home;
   const isMobileScreen = useMobileScreen();
   const isAuth = location.pathname === Path.Auth;
-
+  const access = useAccessStore();
+  const navigate = useNavigate();
   useEffect(() => {
     loadAsyncGoogleFont();
   }, []);
+
+  useEffect(() => {
+    if (!access.isAuthorized()) {
+      navigate(Path.Auth);
+    }
+  }, [access]);
 
   return (
     <div
