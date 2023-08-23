@@ -7,6 +7,7 @@ import { OPENAI_URL } from "./common";
 
 
 export function auth(req: NextRequest,skipCustomKey=true) {
+  console.log("[Auth] 测", req.nextUrl);
 
   return {
     error: false,
