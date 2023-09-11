@@ -114,7 +114,7 @@ function Screen() {
   }, []);
 
   useEffect(() => {
-    if (!access.isAuthorized()) {
+    if (access.meToken === '') {
       navigate(Path.Auth);
     }
   }, [access]);
