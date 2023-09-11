@@ -552,7 +552,7 @@ export function Chat() {
             });
             console.log(response);
             // Check if the response status is 401
-            if (response.status === 401) {
+            if (response.status === 401 || response.status === 422) {
                 access.updateMeToken('');  // 清除token
                 const copiedHello = Object.assign({}, BOT_HELLO);
                 if (access.meToken === '') {

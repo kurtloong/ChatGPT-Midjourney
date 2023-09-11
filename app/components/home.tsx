@@ -117,7 +117,7 @@ function Screen() {
     if (access.meToken === '') {
       navigate(Path.Auth);
     }
-  }, [access]);
+  }, [access,navigate]);
 
   return (
     <div
