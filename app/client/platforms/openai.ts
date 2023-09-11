@@ -112,6 +112,8 @@ export class ChatGPTApi implements LLMApi {
               } catch {}
 
               if (res.status === 401) {
+                console.error("[Request] unauthorized openAi 401");
+                console.error("[Request] unauthorized openAi 401", extraInfo);
                 responseTexts.push(Locale.Error.Unauthorized);
               }
 
@@ -191,6 +193,7 @@ export class ChatGPTApi implements LLMApi {
     ]);
 
     if (used.status === 401) {
+      console.error("[Usage] unauthorized openAi 401");
       throw new Error(Locale.Error.Unauthorized);
     }
 
