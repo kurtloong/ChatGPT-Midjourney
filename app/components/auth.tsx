@@ -48,7 +48,7 @@ const handleLogin = () => {
       // 如果登录成功，保存返回的JWT token
       const token = data.access_token;
       console.log(token);
-      access.updateToken(token);  // 更新为从后端接收的token
+      access.updateMeToken(token);  // 更新为从后端接收的token
       goHome();
     })
     .catch(error => {

@@ -8,13 +8,14 @@ import { ALL_MODELS } from "./config";
 export interface AccessControlStore {
   accessCode: string;
   token: string;
-
+  meToken: string;
   needCode: boolean;
   hideUserApiKey: boolean;
   openaiUrl: string;
   midjourneyProxyUrl: string;
   useMjImgSelfProxy: boolean;
 
+  updateMeToken: (_: string) => void;
   updateToken: (_: string) => void;
   updateCode: (_: string) => void;
   updateMidjourneyProxyUrl: (_: string) => void;
@@ -35,7 +36,7 @@ export const useAccessStore = create<AccessControlStore>()(
       openaiUrl: "/api/openai/",
       midjourneyProxyUrl: "",
       useMjImgSelfProxy: true,
-
+      meToken:"",
       enabledAccessControl() {
         get().fetch();
 
@@ -46,6 +47,9 @@ export const useAccessStore = create<AccessControlStore>()(
       },
       updateToken(token: string) {
         set(() => ({ token }));
+      },
+      updateMeToken(metoken: string) {
+        set(() => ({ meToken: metoken }));
       },
       updateMidjourneyProxyUrl(midjourneyProxyUrl: string) {
         set(() => ({ midjourneyProxyUrl }));

@@ -538,7 +538,7 @@ export function Chat() {
         setIsLoading(true);
         try {
 
-            const token = access.token;  // 获取当前token
+            const token = access.meToken;  // 获取当前token
             console.log(token);
             // Deduct point
             const response = await fetch("https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/deduct_point", {
@@ -553,9 +553,9 @@ export function Chat() {
             console.log(response);
             // Check if the response status is 401
             if (response.status === 401) {
-                access.updateToken('');  // 清除token
+                access.updateMeToken('');  // 清除token
                 const copiedHello = Object.assign({}, BOT_HELLO);
-                if (!accessStore.isAuthorized()) {
+                if (access.meToken === '') {
                     copiedHello.content = Locale.Error.Unauthorized;
                 }
                 context.push(copiedHello);
