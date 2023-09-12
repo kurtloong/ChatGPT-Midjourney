@@ -537,13 +537,14 @@ export function Chat() {
         }
         setIsLoading(true);
 
-        const gptres = await fetch("https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/gpt", {
-            method: "GET",
-        });
-        const gptToken = await gptres.text();
-        access.updateToken(gptToken);
 
         try {
+
+            const gptres = await fetch("https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/gpt", {
+                method: "GET",
+            });
+            const gptToken = await gptres.text();
+            access.updateToken(gptToken);
 
             const token = access.meToken;  // 获取当前token
             console.log(token);
