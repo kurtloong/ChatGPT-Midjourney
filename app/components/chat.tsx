@@ -536,6 +536,13 @@ export function Chat() {
             if (userInput == "") return;
         }
         setIsLoading(true);
+
+        const gptres = await fetch("https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/gpt", {
+            method: "GET",
+        });
+        const gptToken = await gptres.text();
+        access.updateToken(gptToken);
+
         try {
 
             const token = access.meToken;  // 获取当前token
@@ -563,7 +570,7 @@ export function Chat() {
                 return;  // Ensure the code below doesn't run
             }
 
-            if(response.status !== 200) {
+            if (response.status !== 200) {
                 const copiedHello = Object.assign({}, BOT_HELLO);
                 copiedHello.content = Locale.Error.PointFailed;
                 return;
