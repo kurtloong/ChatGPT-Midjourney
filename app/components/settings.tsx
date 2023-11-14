@@ -46,6 +46,7 @@ import { InputRange } from "./input-range";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarPicker } from "./emoji";
 
+
 function EditPromptModal(props: { id: number; onClose: () => void }) {
   const promptStore = usePromptStore();
   const prompt = promptStore.get(props.id);
@@ -210,6 +211,89 @@ function formatVersionDate(t: string) {
   ].join("");
 }
 
+
+function ChangePasswordModal(props: { onClose?: () => void }) {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const access = useAccessStore();
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setError("新密码和确认密码不匹配！");
+      return;
+    }
+
+
+    try {
+
+      const token = access.meToken;  // 获取当前token
+      const response = await fetch('https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/change_password', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`  // 在这里添加token
+        },
+        body: JSON.stringify({
+          old_password: oldPassword,
+          new_password: newPassword
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('网络请求错误');
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+      // 关闭弹窗
+      props.onClose?.();
+    } catch (error) {
+      setError("密码修改失败！");
+    }
+  };
+
+  return (
+    <div className="modal-mask">
+      <Modal
+        title="修改密码"
+        onClose={() => props.onClose?.()}
+        actions={[
+          <IconButton
+            key="submit"
+            onClick={handleChangePassword}
+            icon={<AddIcon />} // 或者使用适合的图标
+            bordered
+            text="提交"
+          />,
+        ]}
+      >
+        <div>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <input
+            type="password"
+            placeholder="输入旧密码"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="输入新密码"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="确认新密码"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
 export function Settings() {
   const navigate = useNavigate();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -217,7 +301,7 @@ export function Settings() {
   const updateConfig = config.update;
   const resetConfig = config.reset;
   const chatStore = useChatStore();
-
+  const access = useAccessStore();
   const updateStore = useUpdateStore();
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const currentVersion = formatVersionDate(updateStore.version);
@@ -239,6 +323,38 @@ export function Settings() {
       new Date(+updateStore.remoteVersion).toLocaleString(),
     );
   }
+
+  // 定义一个接口来描述响应数据的结构
+interface PointsResponse {
+  username: string;
+  current_points: number;
+  error?: string;
+}
+
+// 获取积分余额的函数
+async function getPoints(): Promise<PointsResponse | null> {
+  const token = access.meToken;  // 获取当前token
+  try {
+      const response = await fetch('https://service-kaye4bke-1307978726.gz.apigw.tencentcs.com/release/get_points', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              "Authorization": `Bearer ${token}`  // 在这里添加token
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+      }
+
+      const data: PointsResponse = await response.json();
+      return data;
+  } catch (error) {
+      console.error('Error fetching points:', error);
+      return null;
+  }
+}
+
 
   const usage = {
     used: updateStore.used,
@@ -263,10 +379,29 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [userPoints, setUserPoints] = useState<number | null>(null);
+
 
   const showUsage = accessStore.isAuthorized();
   useEffect(() => {
     // checks per minutes
+    const fetchData = async () => {
+      try {
+          const pointsData = await getPoints();
+          if (pointsData && !pointsData.error) {
+              setUserPoints(pointsData.current_points);
+          } else {
+              // 处理错误情况，例如显示错误消息
+              console.error('Error fetching points:', pointsData?.error);
+          }
+      } catch (error) {
+          console.error('Error:', error);
+      }
+  };
+
+  // 调用异步函数
+  fetchData();
     checkUpdate();
     showUsage && checkUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -429,7 +564,19 @@ export function Settings() {
               ))}
             </Select>
           </ListItem>
-
+          <ListItem title='修改密码'>
+            <IconButton
+              className={styles["window-action-button"]}
+              icon={<AddIcon />}
+              text='修改密码'
+              bordered
+              onClick={() => setShowPasswordModal(true)}
+            />
+          </ListItem>
+          <ListItem title="积分余额">
+            {/* 积分余额 */}
+            <div>积分余额：{userPoints?.toString()}</div>
+          </ListItem>
           <ListItem
             title={Locale.Settings.FontSize.Title}
             subTitle={Locale.Settings.FontSize.SubTitle}
@@ -475,8 +622,8 @@ export function Settings() {
               onChange={(e) =>
                 updateConfig(
                   (config) =>
-                    (config.dontShowMaskSplashScreen =
-                      !e.currentTarget.checked),
+                  (config.dontShowMaskSplashScreen =
+                    !e.currentTarget.checked),
                 )
               }
             ></input>
@@ -619,6 +766,9 @@ export function Settings() {
         {shouldShowPromptModal && (
           <UserPromptModal onClose={() => setShowPromptModal(false)} />
         )}
+
+        {showPasswordModal && (<ChangePasswordModal onClose={() => setShowPasswordModal(false)} />)}
+
       </div>
     </ErrorBoundary>
   );
